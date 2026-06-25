@@ -1,0 +1,74 @@
+/* index.css */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=M+PLUS+Rounded+1c:wght@400;700&display=swap');
+
+:root {
+  /* Soft Pastel Palette */
+  --sakura-pink: #ffb7b2;
+  --sky-blue: #a2c2e0;
+  --cream: #fdf6f0;
+  --soft-text: #475569;
+  --glass: rgba(255, 255, 255, 0.7);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  /* Shinkai-style sunset gradient background */
+  background: linear-gradient(135deg, #e0f2fe 0%, #fdf4f6 50%, #e8f4f8 100%);
+  background-attachment: fixed;
+  font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+  color: var(--soft-text);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* This overrides the 600px box and makes it full-screen */
+.app-container {
+  max-width: 1400px !important; 
+  width: 100% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 40px 24px !important;
+}
+
+/* The "Glass" look for cards */
+.glass-panel {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(148, 163, 184, 0.1);
+}
+
+/* Soft, readable typography */
+h1, h2, h3 {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #334155;
+}
+
+button {
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* Animations for that "interactive" feel */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
