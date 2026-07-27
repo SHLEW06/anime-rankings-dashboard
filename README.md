@@ -1,114 +1,100 @@
 # Shunji's Anime Watch List & Rankings
 
-A cinematic anime watchlist and ranking web app built with React and Firebase. Features a Makoto Shinkai-inspired UI with multiple visual themes, real-time multi-user support, and smooth Framer Motion animations.
+A React and Firebase prototype for shared anime rankings, personal plan-to-watch lists, soundtrack entries, favorites, and a themed scene viewer.
 
-## Features
+> Security status: not ready for public or shared use. The checked-in Firestore rules deny all access while authentication and authorization are being rebuilt. The legacy profile passcodes are client-side checks, not trusted identities. See the [security threat model](docs/security-threat-model.md).
 
-- **Multi-User Rankings** -- Each user logs in with a personal passcode and rates anime on a 1-10 scale (half-point increments). Ratings sync in real-time across all users via Firebase Firestore.
-- **Plan to Watch Lists** -- Every user maintains a personal "Plan to Watch" queue.
-- **OST Tracking** -- Log and browse original soundtracks tied to each anime entry.
-- **Favorites** -- Admin-curated favorites collection displayed in a dedicated gallery.
-- **Scenes Mode** -- A fullscreen, scroll-driven cinematic viewing experience for featured anime.
-- **Three Visual Themes**
-  - Sakura Breeze (day) -- soft pinks and pastels
-  - Golden Hour (sunset) -- warm amber gradients
-  - Hoshizora (night) -- deep blues with falling stars and comets
-  - Auto-switches based on time of day, with manual override
-- **Animated UI** -- Falling cherry blossom petals, glassmorphism cards, animated gradients, and smooth page transitions powered by Framer Motion.
-- **Secure Authentication** -- User passcodes are hashed with PBKDF2-SHA256 (150k iterations). Admin role is protected with a separate passkey.
-- **Responsive Design** -- Optimized for both desktop and mobile viewports.
+## Current features
 
-## Tech Stack
+- Shared anime rankings on a 1 to 10 scale with half-point increments
+- Personal plan-to-watch lists
+- Soundtrack entries linked to anime titles
+- Curated favorites and scene configuration
+- Day, sunset, and night themes
+- Responsive React interface with Framer Motion animations
 
-| Layer     | Technology                        |
-|-----------|-----------------------------------|
-| Frontend  | React 19, Vite 8                  |
-| Database  | Firebase Firestore (real-time)    |
-| Hosting   | Firebase Hosting                  |
-| Animation | Framer Motion                     |
-| Styling   | CSS-in-JS with themed variables   |
-| Auth      | Custom PBKDF2 passcode hashing    |
+The data interface remains in the code for local development, but the containment rules block Firestore reads and writes. Administrator access is disabled because a secret embedded in a browser bundle cannot provide authorization.
 
-## Project Structure
+## Technology
 
-```
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 19 and Vite 8 |
+| Database | Firebase Firestore |
+| Hosting configuration | Firebase Hosting |
+| Animation | Framer Motion |
+| Styling | CSS-in-JS with themed variables |
+| Authorization | Not implemented |
+
+## Project structure
+
+```text
 src/
-  main.jsx              # React entry point
-  anime-watchlist.jsx    # Main application component
-  firebase.js           # Firebase initialization (uses env vars)
-  index.css             # Global styles and fonts
-public/
-  favicon.svg           # Site favicon
+  main.jsx
+  anime-watchlist.jsx
+  firebase.js
+  index.css
+tests/
+  firestore.rules.test.js
+docs/
+  security-threat-model.md
+firestore.rules
+firebase.json
 ```
 
-## Getting Started
+## Local setup
 
-### Prerequisites
+Prerequisites:
 
-- Node.js 18+
-- A Firebase project with Firestore enabled
+- Node.js 18 or later
+- Java for the Firestore emulator
+- A Firebase project only if you are working on the later authentication milestone
 
-### Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/SHLEW06/Shunji-Anime-Watch-List-Rankings.git
-   cd Shunji-Anime-Watch-List-Rankings
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-
-   Copy the example env file and fill in your Firebase credentials:
-   ```bash
-   cp .env.example .env
-   ```
-
-   Edit `.env` with your values:
-   ```
-   VITE_FIREBASE_API_KEY=your_firebase_api_key
-   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=your_project_id
-   VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
-   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   VITE_FIREBASE_APP_ID=your_app_id
-   VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
-   VITE_ADMIN_PASSKEY=your_admin_passkey
-   ```
-
-4. **Start the dev server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Open in browser** at `http://localhost:5173`
-
-### Build & Deploy
+Install dependencies:
 
 ```bash
-npm run build          # Production build to dist/
-npm run preview        # Preview the production build locally
-npm run deploy         # Build and deploy to Firebase Hosting
+npm install
 ```
 
-## Environment Variables
+Copy the environment template:
 
-All environment variables are prefixed with `VITE_` so Vite exposes them to the client bundle.
+```bash
+cp .env.example .env
+```
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_FIREBASE_API_KEY` | Firebase Web API key |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase Auth domain |
-| `VITE_FIREBASE_PROJECT_ID` | Firebase project ID |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase Storage bucket |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase Cloud Messaging sender ID |
-| `VITE_FIREBASE_APP_ID` | Firebase app ID |
-| `VITE_FIREBASE_MEASUREMENT_ID` | Google Analytics measurement ID |
-| `VITE_ADMIN_PASSKEY` | Admin access passkey |
+Set the Firebase web configuration for a non-production development project. Firebase web configuration identifies a project but does not authorize database access:
+
+```text
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+## Validation
+
+```bash
+npm run test:rules
+npm run lint
+npm run build
+```
+
+The rules test starts a local Firestore emulator and confirms that unauthenticated and synthetic authenticated clients cannot read, write, or delete known and unknown document paths.
+
+## Deployment warning
+
+Do not deploy this application for public use yet. The containment rules intentionally disable shared persistence. A later milestone must add Firebase Authentication, per-user ownership, trusted administrator roles, schema validation, and tested authorization rules before Firestore access is restored.
+
+Any administrator passkey previously placed in a `VITE_` variable must be treated as exposed because Vite includes those values in browser bundles. Remove it from the hosting environment and rotate it after containment if it was reused or still controls another system.
 
 ## License
 
