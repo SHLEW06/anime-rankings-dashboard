@@ -2,6 +2,10 @@
 
 A React and Firebase prototype for shared anime rankings, personal plan-to-watch lists, soundtrack entries, favorites, and a themed scene viewer.
 
+![Cinematic anime rankings view](docs/assets/cinematic-rankings-preview.jpg)
+
+*Cinematic mode uses a selected scene as the backdrop while keeping the shared score and individual ratings visible.*
+
 ## Current state
 
 | Interface | Data layer | Authorization | Public deployment |
