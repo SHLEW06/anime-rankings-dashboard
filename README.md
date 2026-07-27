@@ -2,6 +2,24 @@
 
 A React and Firebase prototype for shared anime rankings, personal plan-to-watch lists, soundtrack entries, favorites, and a themed scene viewer.
 
+## Current state
+
+| Interface | Data layer | Authorization | Public deployment |
+|---|---|---|---|
+| Working prototype | Firebase adapter retained | Rebuild required | Intentionally disabled |
+
+```mermaid
+flowchart LR
+    A["React ranking interface"] --> B["Firebase data adapter"]
+    B --> C["Firestore security rules"]
+    C --> D["All reads and writes denied"]
+    E["Future Firebase Authentication"] -. "required before reopening data" .-> C
+```
+
+The interface demonstrates the product idea and frontend implementation. Shared
+persistence is deliberately contained until real user identity, ownership, and
+administrator roles are implemented and tested.
+
 > Security status: not ready for public or shared use. The checked-in Firestore rules deny all access while authentication and authorization are being rebuilt. The legacy profile passcodes are client-side checks, not trusted identities. See the [security threat model](docs/security-threat-model.md).
 
 ## Current features
