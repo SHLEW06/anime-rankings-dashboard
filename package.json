@@ -1,7 +1,7 @@
 {
   "name": "shunji-anime-watch-list-rankings",
   "version": "1.0.0",
-  "description": "A cinematic anime watchlist and ranking app with multi-user support, themed UI inspired by Makoto Shinkai films, and Firebase-powered real-time sync.",
+  "description": "A React and Firebase prototype for shared anime rankings, personal watchlists, soundtrack entries, and themed scene viewing.",
   "author": "SHLEW06",
   "license": "MIT",
   "type": "module",
@@ -12,6 +12,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-anime-watchlist \"node --test tests/firestore.rules.test.js\"",
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@firebase/rules-unit-testing": "^3.0.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

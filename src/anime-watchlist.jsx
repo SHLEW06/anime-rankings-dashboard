@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 // CONSTANTS
 // ============================================================================
 
-const ADMIN_PASSKEY = import.meta.env.VITE_ADMIN_PASSKEY;
 const VALID_RATINGS = [1, 2, 3, 4, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 const LS_USER = "anime-wl-user-v2";
 const LS_ONBOARDED = "anime-wl-onboarded-v2";
@@ -309,7 +308,7 @@ function WelcomeBanner({ onClose, onSignIn }) {
           <strong>To rate anime and add titles, you must create a profile with a passcode.</strong> Click "Members" → "+ Create Profile" to get started. Already have a profile? Click "Sign In" in the top right.
         </p>
         <div className="welcome-tips">
-          <div className="welcome-tip"><strong>🔐 Security:</strong> Passcodes are hashed with PBKDF2 — no one (not even the admin) can see them.</div>
+          <div className="welcome-tip"><strong>Passcode status:</strong> This legacy client-side check is not trusted authentication.</div>
           <div className="welcome-tip"><strong>📌 Tip:</strong> Check the new <strong>Scenes</strong> tab for a cinematic ranking experience.</div>
         </div>
       </div>
@@ -803,7 +802,7 @@ export default function AnimeWatchList() {
   };
 
   // AUTH
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = false;
   const [currentUser, setCurrentUser] = useState(() => {
     try { return localStorage.getItem(LS_USER) || null; }
     catch { return null; }
@@ -987,13 +986,6 @@ export default function AnimeWatchList() {
   };
 
   // AUTH
-  const tryAdmin = () => {
-    if (passInput === ADMIN_PASSKEY) {
-      setIsAdmin(true); setModal(null); setPassInput(""); setPassError(false);
-      showToast("Admin unlocked");
-    } else setPassError(true);
-  };
-
   const trySignIn = async () => {
     if (!loginTarget || authBusy) return;
     const person = people.find(p => p.name === loginTarget);
@@ -1177,11 +1169,9 @@ export default function AnimeWatchList() {
               </button>
             )}
 
-            {isAdmin ? (
-              <button onClick={() => { setIsAdmin(false); showToast("Admin locked"); }} className="btn btn-outline btn-admin-active">🔓 Admin</button>
-            ) : (
-              <button onClick={() => setModal("admin")} className="btn btn-outline">🔒 Admin</button>
-            )}
+            <button type="button" className="btn btn-outline" disabled title="Admin access requires trusted authentication">
+              Admin disabled
+            </button>
           </div>
         </header>
 
@@ -1357,7 +1347,7 @@ export default function AnimeWatchList() {
                               {isMe && <span className="me-tag">YOU</span>}
                               <span className="lock-tag" title={
                                 !hasPasscode ? "Unclaimed" :
-                                hashed ? "Passcode hashed (secure)" :
+                                hashed ? "Legacy passcode hash stored" :
                                 "Plaintext — upgrades on next login"
                               }>
                                 {!hasPasscode ? "🔓" : hashed ? "🔐" : "🔒"}
@@ -1678,7 +1668,7 @@ export default function AnimeWatchList() {
 
             {modal === "claimProfile" && loginTarget && (<>
               <h3 className="modal-title">Claim Profile: {loginTarget}</h3>
-              <p className="modal-subtitle">Set a passcode to claim this profile. It will be securely hashed.</p>
+              <p className="modal-subtitle">Set a passcode for the legacy profile flow. This is not trusted authentication.</p>
               <label style={mLabel}>New Passcode (min 3 chars)</label>
               <input type="password" value={claimPass} onChange={e => setClaimPass(e.target.value)}
                 className="txt-input" placeholder="Choose a passcode" autoFocus disabled={authBusy} />
@@ -1686,7 +1676,7 @@ export default function AnimeWatchList() {
               <input type="password" value={claimPass2} onChange={e => setClaimPass2(e.target.value)}
                 className="txt-input" placeholder="Type it again"
                 onKeyDown={e => e.key === "Enter" && claimProfile()} disabled={authBusy} />
-              <p className="security-note">🔐 PBKDF2 (150k iterations). No one can read your passcode.</p>
+              <p className="security-note">The browser hashes this passcode with PBKDF2 before storage. Do not reuse a password from another service.</p>
               <div style={mActions}>
                 <button onClick={() => { setModal("signin"); setClaimPass(""); setClaimPass2(""); }} className="btn btn-outline">Back</button>
                 <button disabled={!claimPass || !claimPass2 || authBusy} onClick={claimProfile} className="btn btn-primary">
@@ -1718,7 +1708,7 @@ export default function AnimeWatchList() {
               <input type="password" value={newPersonPass2} onChange={e => setNewPersonPass2(e.target.value)}
                 className="txt-input" placeholder="Type it again"
                 onKeyDown={e => e.key === "Enter" && createProfile()} disabled={authBusy} />
-              <p className="security-note">🔐 PBKDF2 (150k iterations). If you forget it, ask the admin to reset.</p>
+              <p className="security-note">This client-side passcode flow does not enforce database authorization.</p>
               <div style={mActions}>
                 <button onClick={() => { setModal(null); setNewPersonName(""); setNewPersonPass(""); setNewPersonPass2(""); }} className="btn btn-outline">Cancel</button>
                 <button disabled={!newPersonName.trim() || !newPersonPass || !newPersonPass2 || authBusy} onClick={createProfile} className="btn btn-primary">
@@ -1741,27 +1731,12 @@ export default function AnimeWatchList() {
               <input type="password" value={newPass2} onChange={e => setNewPass2(e.target.value)}
                 className="txt-input" placeholder="Type it again"
                 onKeyDown={e => e.key === "Enter" && savePasscode()} disabled={authBusy} />
-              <p className="security-note">🔐 Hashed before storage.</p>
+              <p className="security-note">Hashed in the browser before storage. This is not trusted authorization.</p>
               <div style={mActions}>
                 <button onClick={() => { setModal(null); setPasscodeFor(null); setNewPass1(""); setNewPass2(""); }} className="btn btn-outline">Cancel</button>
                 <button disabled={!newPass1 || !newPass2 || authBusy} onClick={savePasscode} className="btn btn-primary">
                   {authBusy ? "Saving…" : passcodeMode === "reset" ? "Reset" : "Change"}
                 </button>
-              </div>
-            </>)}
-
-            {modal === "admin" && (<>
-              <h3 className="modal-title">Admin Access</h3>
-              <p className="modal-subtitle">Admin can edit/delete anything, manage favorites, wipe ratings, reset passcodes.</p>
-              <input type="password" value={passInput}
-                onChange={e => { setPassInput(e.target.value); setPassError(false); }}
-                onKeyDown={e => e.key === "Enter" && tryAdmin()}
-                className={`txt-input ${passError ? "input-error" : ""}`}
-                placeholder="Admin passkey" autoFocus />
-              {passError && <p className="err-msg">Incorrect passkey</p>}
-              <div style={mActions}>
-                <button onClick={() => { setModal(null); setPassInput(""); setPassError(false); }} className="btn btn-outline">Cancel</button>
-                <button onClick={tryAdmin} className="btn btn-primary">Unlock</button>
               </div>
             </>)}
 
