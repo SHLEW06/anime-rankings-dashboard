@@ -2,9 +2,29 @@
 
 A React and Firebase prototype for shared anime rankings, personal plan-to-watch lists, soundtrack entries, favorites, and a themed scene viewer.
 
+## Interface tour
+
+### Cinematic mode
+
 ![Cinematic anime rankings view](docs/assets/cinematic-rankings-preview.jpg)
 
 *Cinematic mode uses a selected scene as the backdrop while keeping the shared score and individual ratings visible.*
+
+### Rankings
+
+![Ranked anime grid with the current top titles](docs/assets/rankings-grid-preview.jpg)
+
+*The ranked grid makes the current order easy to scan. In this capture, Fullmetal Alchemist: Brotherhood is #1, followed by Cyberpunk: Edgerunners and Steins;Gate.*
+
+### Profile setup
+
+![Create profile form](docs/assets/profile-creation-preview.jpg)
+
+1. Open the Members tab.
+2. Select **Create Profile**.
+3. Choose a display name, color, and passcode.
+
+This is a legacy prototype profile flow. Its client-side passcode does not provide database authorization.
 
 ## Current state
 
